@@ -9,7 +9,7 @@ terraform {
 
 provider "proxmox" {
   pm_api_url      = "https://${var.proxmox-host}:8006/api2/json"
-  pm_user         = "root@pam"
+  pm_user         = var.password
   pm_password     = var.password
   pm_tls_insecure = "true"
   pm_parallel     = 10
@@ -25,7 +25,7 @@ resource "proxmox_vm_qemu" "proxmox_vm_master" {
   memory      = var.num_k3s_masters_mem
   cores       = 4
 
-  ipconfig0 = "ip=192.168.3.8${count.index + 1}/24,gw=192.168.3.1"
+  ipconfig0 = "ip=10.0.100.20${count.index + 1}/24,gw=10.0.100.1"
 
 }
 
@@ -39,7 +39,7 @@ resource "proxmox_vm_qemu" "proxmox_vm_workers" {
   memory      = var.num_k3s_nodes_mem
   cores       = 4
 
-  ipconfig0 = "ip=192.168.3.9${count.index + 1}/24,gw=192.168.3.1"
+  ipconfig0 = "ip=10.0.100.21${count.index + 1}/24,gw=10.0.100.1"
 
 }
 
@@ -53,7 +53,7 @@ data "template_file" "k8s" {
 
 resource "local_file" "k8s_file" {
   content  = data.template_file.k8s.rendered
-  filename = "../inventory/my-cluster/hosts.ini"
+  filename = "../inventory/homelab/hosts.ini"
 }
 
 output "Master-IPS" {
