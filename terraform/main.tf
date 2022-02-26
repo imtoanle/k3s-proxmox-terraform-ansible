@@ -9,7 +9,7 @@ terraform {
 
 provider "proxmox" {
   pm_api_url      = "https://${var.proxmox-host}:8006/api2/json"
-  pm_user         = var.password
+  pm_user         = var.username
   pm_password     = var.password
   pm_tls_insecure = "true"
   pm_parallel     = 10
@@ -24,7 +24,7 @@ resource "proxmox_vm_qemu" "proxmox_vm_master" {
   agent       = 1
   memory      = var.num_k3s_masters_mem
   cores       = 4
-
+  vlan        = 100
   ipconfig0 = "ip=10.0.100.20${count.index + 1}/24,gw=10.0.100.1"
 
 }
@@ -38,7 +38,7 @@ resource "proxmox_vm_qemu" "proxmox_vm_workers" {
   agent       = 1
   memory      = var.num_k3s_nodes_mem
   cores       = 4
-
+  vlan        = 100
   ipconfig0 = "ip=10.0.100.21${count.index + 1}/24,gw=10.0.100.1"
 
 }
